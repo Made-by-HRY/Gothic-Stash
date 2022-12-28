@@ -134,4 +134,4 @@ dmypy.json
 .idea
 
 # ZIP artifacts
-./*.zip
+/*.zip
