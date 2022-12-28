@@ -1,23 +1,24 @@
-name: Create Archive
+name: Release
 on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - name: Install Checkout
+      uses: actions/checkout@v2
+    - name: Install Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11
+    - name: Run Pre-Build Tests
+      run: python3 tests/pre_build.py
+    - name: Build artifacts
+      run: python3 release.py
+    - name: Run Post-Build Tests
+      run: python3 tests/post_build.py
     - name: Set Date String
       run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-    - name: Archive Archolos Files
-      uses: vimtor/action-zip@v1
-      with:
-        files: docs/assets/sources/archolos/
-        dest: TheChroniclesOfMyrtana-All.zip
-    - name: Archive Archolos GD3D11 Files
-      uses: vimtor/action-zip@v1
-      with:
-        files: docs/assets/sources/archolos/system/GD3D11/
-        dest: TheChroniclesOfMyrtana-GD3D11.zip
-    - name: Upload Archolos Release
+    - name: Create Release with built artifacts
       uses: ncipollo/release-action@v1
       with:
         artifacts: "./*.zip"
